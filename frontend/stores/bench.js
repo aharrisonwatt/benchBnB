@@ -1,4 +1,5 @@
-//stores/bench.js
+var BenchConstants = require('../constants/bench_constants');
+
 var Store = require('flux/utils').Store;
 var AppDispatcher = require('../dispatcher/dispatcher');
 var _benches = {};
@@ -8,6 +9,12 @@ BenchStore.all = function () {
   return Object.assign({}, _benches);
 };
 
-window.BenchStore = BenchStore; //Just for testing
+BenchStore.__onDispatch = function (payload) {
+    switch(payload.actionType) {
+      case BenchConstants.BENCHES_RECEIVED:
+        _benches = payload.benches;
+        break;
+    }
+  };
 
 module.exports = BenchStore;

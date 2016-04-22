@@ -20016,7 +20016,8 @@
 /* 166 */
 /***/ function(module, exports, __webpack_require__) {
 
-	//stores/bench.js
+	var BenchConstants = __webpack_require__(191);
+	
 	var Store = __webpack_require__(167).Store;
 	var AppDispatcher = __webpack_require__(185);
 	var _benches = {};
@@ -20026,7 +20027,13 @@
 	  return Object.assign({}, _benches);
 	};
 	
-	window.BenchStore = BenchStore; //Just for testing
+	BenchStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	    case BenchConstants.BENCHES_RECEIVED:
+	      _benches = payload.benches;
+	      break;
+	  }
+	};
 	
 	module.exports = BenchStore;
 
@@ -26835,8 +26842,6 @@
 	    });
 	  }
 	};
-	
-	window.ApiUtil = ApiUtil;
 	
 	module.exports = ApiUtil;
 
