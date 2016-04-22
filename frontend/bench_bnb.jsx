@@ -1,8 +1,7 @@
 var React = require('react'),
     ReactDOM = require('react-dom'),
-    Route = require('react-router').Route,
-    Router = require('react-router').Router,
-    BenchStore = require('./components/store/bench');
+    BenchStore = require('./stores/bench'),
+    ApiUtil = require('./util/api_util');
 
 
 document.addEventListener("DOMContentLoaded", function () {
