@@ -48,6 +48,7 @@
 	    ReactDOM = __webpack_require__(32),
 	    BenchStore = __webpack_require__(166),
 	    ApiUtil = __webpack_require__(189),
+	    Search = __webpack_require__(252),
 	    Index = __webpack_require__(191);
 	
 	var Router = __webpack_require__(193).Router;
@@ -75,8 +76,8 @@
 	var routes = React.createElement(
 	  Route,
 	  { path: '/', component: App },
-	  React.createElement(IndexRoute, { component: Index }),
-	  React.createElement(Route, { path: 'benches', component: Index })
+	  React.createElement(IndexRoute, { component: Search }),
+	  React.createElement(Route, { path: 'benches', component: Search })
 	);
 	
 	document.addEventListener("DOMContentLoaded", function () {
@@ -26852,10 +26853,11 @@
 	var ServerActions = __webpack_require__(190);
 	
 	var ApiUtil = {
-	  fetchBenches: function () {
+	  fetchBenches: function (bounds) {
 	    $.ajax({
 	      url: "api/benches",
 	      method: "GET",
+	      data: bounds,
 	      success: function (benches) {
 	        ServerActions.receiveAllBenches(benches);
 	      }
@@ -26904,7 +26906,6 @@
 	
 	  componentDidMount: function () {
 	    this.benchListener = BenchStore.addListener(this._onChange);
-	    ClientActions.fetchBenches();
 	  },
 	
 	  componentWillUnmount: function () {
@@ -26912,6 +26913,7 @@
 	  },
 	
 	  render: function () {
+	    console.log("rendering index");
 	    var benches = this.state.benches;
 	    return React.createElement(
 	      'div',
@@ -26945,8 +26947,8 @@
 	var ApiUtil = __webpack_require__(189);
 	
 	module.exports = {
-	  fetchBenches: function () {
-	    ApiUtil.fetchBenches();
+	  fetchBenches: function (bounds) {
+	    ApiUtil.fetchBenches(bounds);
 	  }
 	};
 
@@ -32360,6 +32362,95 @@
 	
 	exports['default'] = _createRouterHistory2['default'](_historyLibCreateHashHistory2['default']);
 	module.exports = exports['default'];
+
+/***/ },
+/* 252 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1),
+	    Map = __webpack_require__(253),
+	    Index = __webpack_require__(191);
+	
+	module.exports = React.createClass({
+	  displayName: 'exports',
+	
+	
+	  render: function () {
+	    console.log("rendering search.jsx");
+	    return React.createElement(
+	      'div',
+	      { className: 'search' },
+	      React.createElement(Index, null),
+	      React.createElement(Map, null)
+	    );
+	  }
+	
+	});
+
+/***/ },
+/* 253 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var PropTypes = React.PropTypes;
+	var BenchStore = __webpack_require__(166),
+	    ClientActions = __webpack_require__(192);
+	
+	module.exports = React.createClass({
+	  displayName: 'exports',
+	
+	
+	  getInitialState: function () {
+	    return { benches: [] };
+	  },
+	
+	  componentDidMount: function () {
+	    this.benchListener = BenchStore.addListener(this._onChange);
+	    var mapDOMNode = this.refs.map;
+	    var mapOptions = {
+	      center: { lat: 37.7758, lng: -122.435 },
+	      zoom: 12
+	    };
+	    this.map = new google.maps.Map(mapDOMNode, mapOptions);
+	    var map = this.map;
+	    this.map.addListener('idle', function () {
+	      var bounds = {};
+	      bounds['northEast'] = map.getBounds().getNorthEast();
+	      bounds['southWest'] = map.getBounds().getSouthWest();
+	      ClientActions.fetchBenches(bounds);
+	    });
+	  },
+	
+	  componentWillUnmount: function () {
+	    this.benchListener.remove();
+	  },
+	
+	  _onChange: function () {
+	    this.setState({ benches: BenchStore.all() });
+	  },
+	
+	  addMarkers: function () {
+	    var benches = this.state.benches;
+	    var that = this;
+	
+	    Object.keys(benches).map(function (benchId) {
+	      var bench = benches[benchId];
+	      var myLatlng = new google.maps.LatLng(bench.lat, bench.lng);
+	      var marker = new google.maps.Marker({
+	        position: myLatlng,
+	        title: bench.description
+	      });
+	      return marker.setMap(that.map);
+	    });
+	  },
+	
+	  render: function () {
+	    this.addMarkers();
+	    console.log("rendering map");
+	    return React.createElement('div', { className: 'map', ref: 'map' });
+	  }
+	
+	});
 
 /***/ }
 /******/ ]);

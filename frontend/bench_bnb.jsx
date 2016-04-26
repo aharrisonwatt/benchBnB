@@ -2,6 +2,7 @@ var React = require('react'),
     ReactDOM = require('react-dom'),
     BenchStore = require('./stores/bench'),
     ApiUtil = require('./util/api_util'),
+    Search = require('./components/search'),
     Index = require('./components/index');
 
 var Router = require('react-router').Router;
@@ -22,8 +23,8 @@ var App = React.createClass({
 
 var routes = (
   <Route path="/" component={App}>
-    <IndexRoute component={Index} />
-    <Route path="benches" component={Index} />
+    <IndexRoute component={Search} />
+    <Route path="benches" component={Search} />
   </Route>
 );
 

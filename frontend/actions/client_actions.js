@@ -1,7 +1,7 @@
 var ApiUtil = require('../util/api_util');
 
 module.exports = {
-  fetchBenches: function(){
-    ApiUtil.fetchBenches();
+  fetchBenches: function(bounds){
+    ApiUtil.fetchBenches(bounds);
   }
 };

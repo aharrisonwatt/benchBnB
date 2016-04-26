@@ -13,7 +13,6 @@ module.exports = React.createClass({
 
   componentDidMount: function () {
     this.benchListener = BenchStore.addListener(this._onChange);
-    ClientActions.fetchBenches();
   },
 
   componentWillUnmount: function () {
@@ -21,6 +20,7 @@ module.exports = React.createClass({
   },
 
   render: function () {
+    console.log("rendering index");
     var benches = this.state.benches;
     return (
       <div className="bench-index">
